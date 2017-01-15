@@ -60,7 +60,6 @@ save_flg = 1
 # 
 # ------------------------------------------------------------------------------
 
-# protocol = "inlabStr" 
 protocol = "inlabUnstr" 
 subj = 'Dzung'
 subjfolder = subj
