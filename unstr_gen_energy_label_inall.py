@@ -409,9 +409,9 @@ def mergeFeatsLabels(allfeatDF, r_df_test_label, activities, lfeatfile):
 def genVideoSyncFile(featsfile, birthtime, r_df_test, save_flg, syncfile):
     video_sensor_bias_ms = 0
     featDF = pd.read_csv(featsfile)
-    # featDF.index = range(featDF.shape[0])
+    featDF.index = range(featDF.shape[0])
 
-    # r_df_test['Time'] = r_df_test.index
+    r_df_test['Time'] = r_df_test.index
 
     birthtime_s = birthtime[:19]
 
@@ -420,50 +420,45 @@ def genVideoSyncFile(featsfile, birthtime, r_df_test, save_flg, syncfile):
     base_unixtime = time.mktime(datetime.datetime.strptime(birthtime_s,"%Y-%m-%d %H:%M:%S").timetuple())
     base_unixtime = base_unixtime*1000 + video_sensor_bias_ms
 
-    # r_df_test["synctime"] = (r_df_test["synctime"] - base_unixtime)/1000
-    r_df_test["synctime"] = (r_df_test["unixtime"] - base_unixtime)/1000
+    r_df_test["synctime"] = (r_df_test["synctime"] - base_unixtime)/1000
     extr_idx = list(range(0,len(r_df_test)-winsize,stride))
     r_df_tDsample = r_df_test.iloc[extr_idx]
 
     r_df_tDsample.index = range(len(r_df_tDsample))
-    r_df_tDsample = r_df_tDsample[['synctime','Angular_Velocity_x','Angular_Velocity_y','Angular_Velocity_z','Linear_Accel_x','Linear_Accel_y','Linear_Accel_z','feedingClass']]
 
     raw_energy = pd.concat([featDF, r_df_tDsample], axis=1)
 
     if save_flg:
-        raw_energy = raw_energy[['Time','unixtime','synctime','energy_acc_xyz','orientation_acc_xyz','energy_orientation',"energy_acc_xxyyzz",'Angular_Velocity_x','Angular_Velocity_y','Angular_Velocity_z','Linear_Accel_x','Linear_Accel_y','Linear_Accel_z','feedingClass']]
+        raw_energy = raw_energy[['Time','unixtime','synctime','energy_acc_xyz','orientation_acc_xyz','energy_orientation',"energy_acc_xxyyzz",'Angular_Velocity_x','Angular_Velocity_y','Angular_Velocity_z','Linear_Accel_x','Linear_Accel_y','Linear_Accel_z','Class']]
         raw_energy.to_csv(syncfile)
-
-
 
 # getTimeError: Video/Annot leading sensor
 def getTimeError(x, pos):
     if pos == 'tripod':
         return {
                 # 10 subjs
+            'Dzung': 18.1,
+            'JC': -24,
+            'Matt': -2,
+            'Jiapeng': 41,
+            'Eric': 18,
+            'Will': 0, 
+            'Shibo': 14,
             'Rawan': 12,
-            'Dzung': 18.1,# 10.5,
-            'Shibo': 22.77, #14,
-            # 'JC': -24,
-            # 'Matt': -2,
-            # 'Jiapeng': 41,
-            # 'Eric': 18,
-            # 'Will': 0, 
-            # 'Cao': 44,
-            # 'Gleb': -4
+            'Cao': 44,
+            'Gleb': -4
         }.get(x, 0)
     if pos == 'desk':
         return {
         # 7 subjs
             'Dzung': 2,
+            'JC': 0,
+            'Matt': 3,
+            'Jiapeng': 0,
+            'Eric': 0,
+            'Will': 0,
+            'Gleb': 2,
             # 'Shibo':
-            # 'JC': 0,
-            # 'Matt': 3,
-            # 'Jiapeng': 0,
-            # 'Eric': 0,
-            # 'Will': 0,
-            # 'Gleb': 2,
-            
         }.get(x, 0)
 
 def getFeedingGestures(x):
@@ -503,11 +498,21 @@ def getNonfeedingGestures(x):
 # ------------------------------------------------------------------------------
 save_flg = 1
 
-subjs = ['Shibo']#,'Shibo','Dzung','Will', 'Gleb', 'JC','Matt','Jiapeng', 'Cao', 'Eric'
-protocol = 'inlabUnstr'
+i_subj = int(sys.argv[1])
 
-for active_participant_counter, subj in enumerate(subjs):
-    if (not (active_participant_counter == 1)):
+protocol = str(sys.argv[2])
+
+#   for US, qualified subjs: Dzung Shibo Rawan JC Jiapeng Matt
+#   for US, finished subjs:  Dzung Shibo Rawan  7     6     9
+
+#           0       1       2       3        4    5    6(no HS)  7       8     9      10
+subjs = ['Rawan','Shibo','Dzung', 'Will', 'Gleb','JC','Matt','Jiapeng','Cao','Eric', 'MattSmall']
+subj = subjs[i_subj]
+
+if 1:
+    if 1:
+# for active_participant_counter, subj in enumerate(subjs):
+#     if (not (active_participant_counter == 1)):
 
         subjfolder = subj
         file = "../inlabUnstr/subject/"+subjfolder+"/right/data.csv"
@@ -544,33 +549,22 @@ for active_participant_counter, subj in enumerate(subjs):
             annotDf = annotDf.drop_duplicates()
 
             if save_flg:
-                annotDf_D.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-desk-sensortime.csv")
-                annotDf_T.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-tripod-sensortime.csv")
-                annotDf.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-united-sensortime.csv")
+                annotDf_D.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-deskprocessed.csv")
+                annotDf_T.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-tripodprocessed.csv")
+                annotDf.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-united-processed.csv")
             
-
 
         if annotation_state ==2:
             birthfile = birthfileD
-            annotDf = importAnnoFile("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-"+position+"-sensortime.csv")
+            annotDf = importAnnoFile("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-"+position+".csv")
             annotDf.StartTime = annotDf.StartTime + pd.Timedelta(seconds=getTimeError(subj,position))
             annotDf.EndTime = annotDf.EndTime + pd.Timedelta(seconds=getTimeError(subj,position))
-            # remove WeirdTimeJump and Confusing data
-            annotDf = processAnnot(annotDf)
-            if save_flg:
-                annotDf.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-united-sensortime.csv")   
-
-
 
         if annotation_state ==1:
             birthfile = birthfileT
-            annotDf = importAnnoFile("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-"+position+"-sensortime.csv")
+            annotDf = importAnnoFile("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-"+position+".csv")
             annotDf.StartTime = annotDf.StartTime + pd.Timedelta(seconds=getTimeError(subj,position))
             annotDf.EndTime = annotDf.EndTime + pd.Timedelta(seconds=getTimeError(subj,position))
-            # remove WeirdTimeJump and Confusing data
-            annotDf = processAnnot(annotDf)
-            if save_flg:
-                annotDf.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-united-processed-sensortime.csv")   
 
 
 
@@ -586,6 +580,10 @@ for active_participant_counter, subj in enumerate(subjs):
         # 
         # ------------------------------------------------------------------------------
 
+        # remove WeirdTimeJump and Confusing data
+        annotDf = processAnnot(annotDf)
+        if save_flg:
+            annotDf.to_csv("../inlabUnstr/subject/" + subjfolder + "/annotation/annotations-edited-united-processed.csv")
 
 
         # ------------------------------------------------------------------------------
@@ -688,30 +686,11 @@ for active_participant_counter, subj in enumerate(subjs):
         # import feature data
         # 
         # ------------------------------------------------------------------------------
-        featsfile = "../"+protocol+"/subject/"+subjfolder+"/feature/energy/engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv"
 
+        # featsfile = featfolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv"
+        # syncfile = featfolder + "raw_engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled_time.csv"
 
-        if annotation_state ==1:
-            birthfile = birthfileT
-            birthtime = open(birthfile, 'r').read()
-            syncfile =  "../"+protocol+"/subject/"+subjfolder+"/feature/energy/engy_ori_win"+str(winsize)+"_str"+str(stride)+"_sync_tripod.csv"
-            genVideoSyncFile(featsfile, birthtime, r_df_test_label, save_flg, syncfile)
+        # # featsfile = featfolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv"
+        # # syncfile = featfolder + "raw_engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled_time.csv"
 
-
-        if annotation_state ==2:
-            birthfile = birthfileD
-            birthtime = open(birthfile, 'r').read()
-            syncfile =  "../"+protocol+"/subject/"+subjfolder+"/feature/energy/engy_ori_win"+str(winsize)+"_str"+str(stride)+"_sync_desk.csv"
-            genVideoSyncFile(featsfile, birthtime, r_df_test_label, save_flg, syncfile)
-
-
-        if annotation_state == 3:
-            birthfile = birthfileD
-            birthtime = open(birthfile, 'r').read()
-            syncfile =  "../"+protocol+"/subject/"+subjfolder+"/feature/energy/engy_ori_win"+str(winsize)+"_str"+str(stride)+"_sync_desk.csv"
-            genVideoSyncFile(featsfile, birthtime, r_df_test_label, save_flg, syncfile)
-
-            birthfile = birthfileT
-            birthtime = open(birthfile, 'r').read()
-            syncfile =  "../"+protocol+"/subject/"+subjfolder+"/feature/energy/engy_ori_win"+str(winsize)+"_str"+str(stride)+"_sync_tripod.csv"
-            genVideoSyncFile(featsfile, birthtime, r_df_test_label, save_flg, syncfile)
+        # genVideoSyncFile(featsfile, birthtime, r_df_test, save_flg, syncfile)

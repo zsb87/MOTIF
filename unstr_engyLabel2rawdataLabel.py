@@ -21,11 +21,21 @@ sys.path.append('C:/Users/szh702/Documents/FoodWatch/inlabStr/')
 from stru_utils import *
 import _pickle as cPickle
 
-protocol = 'inlabUnstr'
 
 save_flg = 1
 
-subjs = ['Dzung']
+i_subj = int(sys.argv[1])
+
+protocol = str(sys.argv[2])
+print(protocol)
+
+#   for US, qualified subjs: Dzung Shibo Rawan JC Jiapeng Matt
+#   for US, finished subjs:  Dzung Shibo Rawan  7     6     9
+
+#           0       1       2       3        4    5    6(no HS)  7       8     9      10
+subjs = ['Rawan','Shibo','Dzung', 'Will', 'Gleb','JC','Matt','Jiapeng','Cao','Eric', 'MattSmall']
+subj = subjs[i_subj]
+
 # subjects wo problem: 'Cao', 'Dzung', 'Eric', 'Jiapeng', 'JC', 'Rawan', 'Shibo'
 # problem subj:  'Gleb', 'Will',,
 # File b'./subject/Will/feature/energy/engy_ori_win4_str2_labeled.csv' does not exist
@@ -33,11 +43,8 @@ subjs = ['Dzung']
 
 
 if 1:
-
-    for subj in subjs:
+    if 1:
         trainsubj = 'train'+subj
-
-
         trainsubjF = trainsubj + '/'
         folder = '../'+protocol+'/subject/'
         featFolder = folder+trainsubjF+"feature/all_features/"

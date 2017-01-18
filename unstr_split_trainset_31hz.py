@@ -27,14 +27,25 @@ from stru_utils import *
 winsize = 4
 stride = 2
 
-subjs = [ 'Dzung']# 
+save_flg = 1
+
+i_subj = int(sys.argv[1])
+
+protocol = str(sys.argv[2])
+
+#   for US, qualified subjs: Dzung Shibo Rawan JC Jiapeng Matt
+#   for US, finished subjs:  Dzung Shibo Rawan  7     6     9
+
+#           0       1       2       3        4    5    6(no HS)  7       8     9      10
+subjs = ['Rawan','Shibo','Dzung', 'Will', 'Gleb','JC','Matt','Jiapeng','Cao','Eric', 'MattSmall']
+subj = subjs[i_subj]
+# subjs = [ 'Dzung']# 
 # subjects wo problem: 'Cao', 'Dzung', 'Eric', 'Jiapeng', 'JC', 'Rawan', 'Shibo'
 # problem subj:  'Gleb', 'Will','Matt',
 # File b'./subject/Will/feature/energy/engy_ori_win4_str2_labeled.csv' does not exist
 
 
-for subj in subjs:
-
+if 1:
     subjfolder = subj + '/'
     folder = './subject/'
     allfeatDF = pd.DataFrame()
@@ -53,6 +64,7 @@ for subj in subjs:
     testDataFolder = './subject/test'+subjfolder
 
     for folder in [trainFolder, testFolder,trainDataFolder,testDataFolder]:
+        print(folder)
         if not os.path.exists(folder):
             os.makedirs(folder)
     
@@ -101,8 +113,8 @@ for subj in subjs:
         testDf = pd.concat([testDf, energyDf.iloc[test_set[i,0]:test_set[i,1]]])
         len_test = len_test + (test_set[i,1] - test_set[i,0])*2
 
-    trainDf = trainDf.drop('Unnamed: 0',1)
-    testDf = testDf.drop('Unnamed: 0',1)
+    # trainDf = trainDf.drop('Unnamed: 0',1)
+    # testDf = testDf.drop('Unnamed: 0',1)
 
     trainDf.to_csv(trainFolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv")
     testDf.to_csv(testFolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv")
