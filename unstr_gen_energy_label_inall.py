@@ -637,13 +637,12 @@ if 1:
         fg = getFeedingGestures(subj)
         nfg = getNonfeedingGestures(subj)
         r_df_test_label = genFeedingGesture_DrinkingLabels(annotDf, r_df_test, activities)
-        r_df_test_label.to_csv('dbgtmp_genFeedingGesture_DrinkingLabels.csv')
+        r_df_test_label.to_csv("../inlabUnstr/subject/" + subjfolder + 'dbgtmp_genFeedingGesture_DrinkingLabels.csv')
 
         r_df_test_label = unstrGenFeedingLabels(annotDf, r_df_test_label, fg)
-        r_df_test_label.to_csv('dbgtmp_unstrGenFeedingLabels.csv')
+        r_df_test_label.to_csv("../inlabUnstr/subject/" + subjfolder + 'dbgtmp_unstrGenFeedingLabels.csv')
 
         r_df_test_label = unstrGenNonfeedingLabels_tmp(annotDf, r_df_test_label, nfg)
-
         r_df_test_label.to_csv("../inlabUnstr/subject/" + subjfolder + "/testdata_labeled.csv")
 
 

@@ -17,7 +17,7 @@ from scipy.signal import *
 from sklearn.metrics import matthews_corrcoef
 import numpy.polynomial.polynomial as poly
 import plotly 
-sys.path.append('C:/Users/szh702/Documents/FoodWatch/inlabStr/')
+sys.path.append(os.path.join(os.path.dirname(__file__), '../inlabStr/'))
 from stru_utils import *
 import _pickle as cPickle
 

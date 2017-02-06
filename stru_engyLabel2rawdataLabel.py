@@ -1,4 +1,4 @@
-import os
+import os, sys
 import re
 import csv
 import matplotlib
@@ -23,6 +23,7 @@ import _pickle as cPickle
 save_flg = 1
 
 i_subj = int(sys.argv[1])
+protocol = 'inlabStr'
 
 #   for US, qualified subjs: Dzung Shibo Rawan JC Jiapeng Matt
 #   for US, finished subjs:  Dzung Shibo Rawan  7     6     9
@@ -34,12 +35,12 @@ subj = subjs[i_subj]
 
 if 1:
 
-    for subj in subjs:
+    if 1:
         trainsubj = 'train'+subj
 
 
-        trainsubjF = trainsubj + '(8Hz)/'
-        folder = '../inlabUnstr/subject/'
+        trainsubjF = trainsubj +'/'
+        folder = '../'+protocol+'/subject/'
         featFolder = folder+trainsubjF+"feature/all_features/"
         engyFolder = folder+trainsubjF+"feature/energy/"
         segfoldder = folder+trainsubjF+"segmentation/"
@@ -107,7 +108,7 @@ if 1:
         trainsubj = 'test'+subj
 
 
-        trainsubjF = trainsubj + '(8Hz)/'
+        trainsubjF = trainsubj+'/'
         featFolder = folder+trainsubjF+"feature/all_features/"
         engyFolder = folder+trainsubjF+"feature/energy/"
         segfoldder = folder+trainsubjF+"segmentation/"

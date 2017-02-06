@@ -18,7 +18,6 @@ from scipy.signal import *
 from sklearn.metrics import matthews_corrcoef
 import numpy.polynomial.polynomial as poly
 import plotly
-sys.path.append('C:/Users/szh702/Documents/FoodWatch/inlabStr/')
 from stru_utils import *
 
 
@@ -50,8 +49,8 @@ subj = subjs[i_subj]
 
 if 1:
 
-    subjfolder = subj + '(8Hz)/'
-    folder = './subject/'
+    subjfolder = subj + '/'
+    folder = '../inlabStr/subject/'
     allfeatDF = pd.DataFrame()
 
     featFolder = folder+subjfolder+"feature/"
@@ -62,10 +61,10 @@ if 1:
     allFeatFolder = folder+subjfolder+"feature/all_features/"    
     lengyfolder = energyfolder + "engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv"
 
-    trainFolder = './subject/train'+subjfolder+"feature/energy/"
-    testFolder = './subject/test'+subjfolder+"feature/energy/"
-    trainDataFolder = './subject/train'+subjfolder
-    testDataFolder = './subject/test'+subjfolder
+    trainFolder = folder+'train'+subjfolder+"feature/energy/"
+    testFolder = folder+'test'+subjfolder+"feature/energy/"
+    trainDataFolder = folder+'train'+subjfolder
+    testDataFolder = folder+'test'+subjfolder
 
     for folder in [trainFolder, testFolder,trainDataFolder,testDataFolder]:
         if not os.path.exists(folder):
@@ -110,8 +109,8 @@ if 1:
     for i in range(shape(test_set)[0]):
         testDf = pd.concat([testDf, energyDf.iloc[test_set[i,0]:test_set[i,1]]])
 
-    trainDf = trainDf.drop('Unnamed: 0',1)
-    testDf = testDf.drop('Unnamed: 0',1)
+    # trainDf = trainDf.drop('Unnamed: 0',1)
+    # testDf = testDf.drop('Unnamed: 0',1)
 
     trainDf.to_csv(trainFolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv")
     testDf.to_csv(testFolder+"engy_ori_win"+str(winsize)+"_str"+str(stride)+"_labeled.csv")
